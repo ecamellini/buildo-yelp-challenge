@@ -4,6 +4,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import injectTapEventPlugin from 'react-tap-event-plugin';
+import Content from './Content';
 
 
 // Needed for onTouchTap (Material UI)
@@ -22,7 +23,7 @@ class App extends React.Component {
             iconElementLeft={<IconButton></IconButton>}
             style={{ backgroundColor: buildoRed }}
           />
-          Content will be here
+          <Content />
         </div>
       </MuiThemeProvider>
     );
