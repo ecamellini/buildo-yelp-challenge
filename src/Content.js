@@ -20,7 +20,6 @@ class Content extends React.Component {
             searchText: "",
             autoCompleteSource: [],
             request: "",
-            readius: this.defaultRadius
         };
 
         this.handleNewRequest = this.handleNewRequest.bind(this);
@@ -78,7 +77,8 @@ class Content extends React.Component {
                         : this.defaultRadius} KM</label>
                 </div>
                 <DisplayResults request={this.state.request}
-                    radius={this.state.radius} />
+                    radius={this.state.radius ? this.state.radius :
+                        this.defaultRadius} />
             </div>
         );
     }
