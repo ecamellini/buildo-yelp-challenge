@@ -10,7 +10,8 @@ class DisplayResults extends React.Component {
     render() {
         return (
             <div>
-                {this.props.request ? "You searched " + this.props.request : ""}
+                {this.props.request ? "You searched " + this.props.request +
+                    " with radius " + this.props.radius : ""}
             </div>
         );
     }

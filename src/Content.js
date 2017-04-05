@@ -1,26 +1,31 @@
 import React from 'react'
 import SearchBar from './SearchBar'
 import DisplayResults from './DisplayResults'
+import Slider from 'material-ui/Slider';
 
 
-// TODO: fill autoCompleteSource
+// TODO: fill autoCompleteSource with locations
 
 /**
  * Content component:
- * it contains the search bar and the area where
- * to display the search results.
+ * it contains the search bar, the radius slider 
+ * and the area where to display the search results.
  */
 class Content extends React.Component {
+    defaultRadius = 5;
+
     constructor(props) {
         super(props);
         this.state = {
             searchText: "",
             autoCompleteSource: [],
             request: "",
+            readius: this.defaultRadius
         };
 
         this.handleNewRequest = this.handleNewRequest.bind(this);
         this.handleUpdateInput = this.handleUpdateInput.bind(this);
+        this.handleRadiusChange = this.handleRadiusChange.bind(this);
     }
 
     /**
@@ -46,15 +51,34 @@ class Content extends React.Component {
             searchText: value,
         });
     }
-    
+
+    handleRadiusChange(event, value) {
+        this.setState({
+            radius: value,
+        });
+    }
+
     render() {
         return (
             <div>
-                <SearchBar handleNewRequest={this.handleNewRequest}
-                    handleUpdateInput={this.handleUpdateInput}
-                    searchText={this.state.searchText}
-                    dataSource={this.state.autoCompleteSource} />
-                <DisplayResults request={this.state.request} />
+                <div>
+                    <SearchBar
+                        handleNewRequest={this.handleNewRequest}
+                        handleUpdateInput={this.handleUpdateInput}
+                        searchText={this.state.searchText}
+                        dataSource={this.state.autoCompleteSource} />
+                    <Slider
+                        min={1}
+                        max={40} // max value of the API according to the docs
+                        step={1}
+                        defaultValue={this.defaultRadius}
+                        value={this.state.radius}
+                        onChange={this.handleRadiusChange} />
+                    <label>Radius: {this.state.radius ? this.state.radius
+                        : this.defaultRadius} KM</label>
+                </div>
+                <DisplayResults request={this.state.request}
+                    radius={this.state.radius} />
             </div>
         );
     }
