@@ -5,6 +5,7 @@ import RangeSlider from './RangeSlider'
 import YelpConfig from './yelp-api-config.js';
 import YelpFusion from './yelp-fusion.js'
 import Snackbar from 'material-ui/Snackbar';
+import ItemDetails from './ItemDetails'
 
 
 // TODO: fill autoCompleteSource with location autocomplete information
@@ -79,7 +80,6 @@ class Content extends React.Component {
                 results: r,
                 page: s
             });
-            console.log(s);
         }).catch(e => {
             console.log(e);
         });
@@ -148,13 +148,14 @@ class Content extends React.Component {
                         onChange={this.handleRadiusChange} />
                         
                 </div>
+                <br/>
                 {this.state.page === STATE.RESULTS &&
                     <DisplayResults request={this.state.request}
                         radius={this.state.radius}
                         results={this.state.results}
                         onResultClick={this.showItemDetails} />}
                 {this.state.page === STATE.DETAILS &&
-                    "DETAILS OF " + this.state.selectedItem.name}
+                    <ItemDetails item={this.state.selectedItem} />}
 
                 <Snackbar
                     open={this.state.page === STATE.NO_RESULTS}

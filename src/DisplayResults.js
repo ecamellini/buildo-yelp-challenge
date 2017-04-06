@@ -1,6 +1,7 @@
 import React from 'react';
 import { List, ListItem } from 'material-ui/List';
 
+
 /**
  * Component that, given a search request, interacts with the Yelp API
  * and displays the results.
