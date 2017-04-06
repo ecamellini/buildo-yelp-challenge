@@ -2,10 +2,10 @@ import React from 'react';
 import SearchBar from './SearchBar';
 import DisplayResults from './DisplayResults';
 import RangeSlider from './RangeSlider'
-import YelpApi from './yelp-api'
+import YelpConfig from './yelp-api-config.js';
+import YelpFusion from './yelp-fusion.js'
 
 
-const yelpApi = new YelpApi();
 // TODO: fill autoCompleteSource with location autocomplete information
 
 /**
@@ -18,6 +18,7 @@ class Content extends React.Component {
     maxRadius = 40; // max API value according to the docs
     minRadius = 1;
     radiusStep = 1;
+    categories = "food,restaurants" 
 
     constructor(props) {
         super(props);
@@ -25,23 +26,46 @@ class Content extends React.Component {
             searchText: "",
             autoCompleteSource: [],
             request: "",
-            radius: this.defaultRadius
+            radius: this.defaultRadius,
+            results: []
         };
 
         this.handleNewRequest = this.handleNewRequest.bind(this);
         this.handleUpdateInput = this.handleUpdateInput.bind(this);
         this.handleRadiusChange = this.handleRadiusChange.bind(this);
+
+        // Setting up the API client instance
+        YelpFusion.accessToken(YelpConfig.APP_ID, YelpConfig.APP_SECRET,
+            YelpConfig.CORS_PROXY_URL).then(response => {
+                this.yelpClient = YelpFusion.client(
+                    response.jsonBody.access_token,
+                    YelpConfig.CORS_PROXY_URL);
+            }).catch(e => {
+                console.log(e);
+            });
     }
 
     /**
      * Callback passed to the SearchBar. It is triggered when the
      * user presses enter and starts the search.
      * 
+     * This is the method that also performs API call to search for
+     * restaurants.
+     * 
      * @param {string} value The searched value
      */
     handleNewRequest(value) {
-        this.setState({
-            request: value,
+        this.yelpClient.search({
+            location: value,  // Location inserted by the user
+            radius: (this.state.radius * 1000), // Radius selected in the slider
+            categories: this.categories // Categories
+        }).then(response => {
+            this.setState({
+                request: value,
+                results: response.jsonBody.businesses
+            });
+        }).catch(e => {
+            console.log(e);
         });
     }
 
@@ -57,10 +81,24 @@ class Content extends React.Component {
         });
     }
 
+    /**
+     * Callback passed to the RangeSlider. It is triggered when the
+     * user changes the value of the Slider.
+     * 
+     * It also calls handleNewRequest so that the displayed results are
+     * directly updated if the user already searched something.
+     * 
+     * @param {string} value The value in the search bar
+     * @param {object} the event that triggered this change
+     */
     handleRadiusChange(event, value) {
         this.setState({
             radius: value,
         });
+        // This call is to update the displayed results for every change in radius
+        if (this.state.request) {
+            this.handleNewRequest(this.state.request);
+        }
     }
 
     render() {
@@ -81,7 +119,8 @@ class Content extends React.Component {
                         onChange={this.handleRadiusChange} />
                 </div>
                 <DisplayResults request={this.state.request}
-                    radius={this.state.radius} />
+                    radius={this.state.radius}
+                    results={this.state.results} />
             </div>
         );
     }
