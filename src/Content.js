@@ -1,8 +1,7 @@
-import React from 'react'
-import SearchBar from './SearchBar'
-import DisplayResults from './DisplayResults'
-import Slider from 'material-ui/Slider';
-
+import React from 'react';
+import SearchBar from './SearchBar';
+import DisplayResults from './DisplayResults';
+import RangeSlider from './RangeSlider'
 
 // TODO: fill autoCompleteSource with locations
 
@@ -13,6 +12,7 @@ import Slider from 'material-ui/Slider';
  */
 class Content extends React.Component {
     defaultRadius = 5;
+    maxRadius = 40;
 
     constructor(props) {
         super(props);
@@ -20,6 +20,7 @@ class Content extends React.Component {
             searchText: "",
             autoCompleteSource: [],
             request: "",
+            radius: this.defaultRadius
         };
 
         this.handleNewRequest = this.handleNewRequest.bind(this);
@@ -52,6 +53,7 @@ class Content extends React.Component {
     }
 
     handleRadiusChange(event, value) {
+        console.log(value)
         this.setState({
             radius: value,
         });
@@ -66,19 +68,16 @@ class Content extends React.Component {
                         handleUpdateInput={this.handleUpdateInput}
                         searchText={this.state.searchText}
                         dataSource={this.state.autoCompleteSource} />
-                    <Slider
+                    <RangeSlider
                         min={1}
-                        max={40} // max value of the API according to the docs
+                        max={this.maxRadius} // max value of the API according to the docs
                         step={1}
                         defaultValue={this.defaultRadius}
                         value={this.state.radius}
                         onChange={this.handleRadiusChange} />
-                    <label>Radius: {this.state.radius ? this.state.radius
-                        : this.defaultRadius} KM</label>
                 </div>
                 <DisplayResults request={this.state.request}
-                    radius={this.state.radius ? this.state.radius :
-                        this.defaultRadius} />
+                    radius={this.state.radius} />
             </div>
         );
     }
