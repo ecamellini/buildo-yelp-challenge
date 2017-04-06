@@ -6,6 +6,7 @@ import YelpConfig from './yelp-api-config.js';
 import YelpFusion from './yelp-fusion.js'
 import Snackbar from 'material-ui/Snackbar';
 import ItemDetails from './ItemDetails'
+import Divider from 'material-ui/Divider';
 
 
 // TODO: fill autoCompleteSource with location autocomplete information
@@ -146,8 +147,9 @@ class Content extends React.Component {
                         defaultValue={this.defaultRadius}
                         value={this.state.radius}
                         onChange={this.handleRadiusChange} />
-                        
                 </div>
+                <br/>
+                <Divider/>
                 <br/>
                 {this.state.page === STATE.RESULTS &&
                     <DisplayResults request={this.state.request}
