@@ -19,6 +19,7 @@ class Content extends React.Component {
     minRadius = 1;
     radiusStep = 1;
     categories = "food,restaurants" 
+    resultsLimit = 50; // Max is 50
 
     constructor(props) {
         super(props);
@@ -58,7 +59,8 @@ class Content extends React.Component {
         this.yelpClient.search({
             location: value,  // Location inserted by the user
             radius: (this.state.radius * 1000), // Radius selected in the slider
-            categories: this.categories // Categories
+            categories: this.categories, // Categories
+            limit: this.resultsLimit // Max number of items returened
         }).then(response => {
             this.setState({
                 request: value,
@@ -101,6 +103,16 @@ class Content extends React.Component {
         }
     }
 
+    /**
+     * Callback passed to DisplayResults. It is triggered when the user
+     * clicks on one of the displayed results.
+     * 
+     * @param {object} item the element of the results clicked by the user
+     */
+    showItemDetails(item){
+        alert(item.name);
+    }
+
     render() {
         return (
             <div>
@@ -120,7 +132,8 @@ class Content extends React.Component {
                 </div>
                 <DisplayResults request={this.state.request}
                     radius={this.state.radius}
-                    results={this.state.results} />
+                    results={this.state.results}
+                    onResultClick={this.showItemDetails}/>
             </div>
         );
     }

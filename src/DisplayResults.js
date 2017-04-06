@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { List, ListItem } from 'material-ui/List';
 
 /**
  * Component that, given a search request, interacts with the Yelp API
@@ -7,12 +7,19 @@ import React from 'react';
  */
 class DisplayResults extends React.Component {
     render() {
+
+        const results = this.props.results.map((item, idx) => {
+            return <ListItem key={"result_" + idx}
+            primaryText={item.name}
+            onClick={() => this.props.onResultClick(item)}
+            />
+        });
+
         return (
             <div>
-                {this.props.request ? "You searched " + this.props.request +
-                    " with radius " + this.props.radius : ""}
-                <br/>
-                {JSON.stringify(this.props.results, null, 4)}
+                <List>
+                    {results}
+                </List>
             </div>
         );
     }
