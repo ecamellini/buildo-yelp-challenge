@@ -6,7 +6,7 @@ import YelpConfig from './yelp-api-config.js';
 import YelpFusion from './yelp-fusion.js'
 import Snackbar from 'material-ui/Snackbar';
 import ItemDetails from './ItemDetails'
-import Divider from 'material-ui/Divider';
+import Colors from './colors.js'
 
 
 // TODO: fill autoCompleteSource with location autocomplete information
@@ -17,6 +17,16 @@ const STATE = {
     DETAILS: 2,
     NO_RESULTS: 4
 }
+
+
+const styles = {
+    inputArea: {
+        backgroundColor: Colors.APP_GREY,
+        display: 'flex',
+        flexFlow: 'row wrap'
+    }
+}
+
 
 /**
  * Content component:
@@ -134,7 +144,7 @@ class Content extends React.Component {
     render() {
         return (
             <div>
-                <div>
+                <div style={styles.inputArea}>
                     <SearchBar
                         handleNewRequest={this.handleNewRequest}
                         handleUpdateInput={this.handleUpdateInput}
@@ -148,9 +158,7 @@ class Content extends React.Component {
                         value={this.state.radius}
                         onChange={this.handleRadiusChange} />
                 </div>
-                <br/>
-                <Divider/>
-                <br/>
+                <br />
                 {this.state.page === STATE.RESULTS &&
                     <DisplayResults request={this.state.request}
                         radius={this.state.radius}

@@ -1,5 +1,32 @@
 import React from 'react';
 import Slider from 'material-ui/Slider';
+import Colors from './colors.js'
+
+
+const styles = {
+    container: {
+        order: 1,
+        flex: '3 1 60%',
+
+        display: 'flex',
+        flexFlow: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+    },
+    slider: {
+        alignSelf: 'center',
+        order: 0,
+        flex: '0.6',
+        paddingTop: 25
+    },
+    label: {
+        alignSelf: 'center',
+        order: 1,
+        flex: '0.1',
+        color: Colors.APP_GREY_TEXT
+    }
+}
 
 
 /**
@@ -13,8 +40,8 @@ import Slider from 'material-ui/Slider';
 class RangeSlider extends React.Component {
     render() {
         return (
-            <div>
-                <Slider
+            <div style={styles.container}>
+                <Slider style={styles.slider}
                     min={this.props.min}
                     max={this.props.max}
                     step={this.props.step}
@@ -22,7 +49,9 @@ class RangeSlider extends React.Component {
                     value={this.props.value} // Current value 
                     onChange={this.props.onChange} // Callback
                 />
-                <label>Radius: {this.props.value} KM</label>
+                <label style={styles.label}>
+                    &nbsp;&nbsp;&nbsp;{this.props.value}km
+                </label>
             </div>
         );
     }
