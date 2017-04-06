@@ -2,8 +2,11 @@ import React from 'react';
 import SearchBar from './SearchBar';
 import DisplayResults from './DisplayResults';
 import RangeSlider from './RangeSlider'
+import YelpApi from './yelp-api'
 
-// TODO: fill autoCompleteSource with locations
+
+const yelpApi = new YelpApi();
+// TODO: fill autoCompleteSource with location autocomplete information
 
 /**
  * Content component:
@@ -12,7 +15,9 @@ import RangeSlider from './RangeSlider'
  */
 class Content extends React.Component {
     defaultRadius = 5;
-    maxRadius = 40;
+    maxRadius = 40; // max API value according to the docs
+    minRadius = 1;
+    radiusStep = 1;
 
     constructor(props) {
         super(props);
@@ -53,7 +58,6 @@ class Content extends React.Component {
     }
 
     handleRadiusChange(event, value) {
-        console.log(value)
         this.setState({
             radius: value,
         });
@@ -69,9 +73,9 @@ class Content extends React.Component {
                         searchText={this.state.searchText}
                         dataSource={this.state.autoCompleteSource} />
                     <RangeSlider
-                        min={1}
-                        max={this.maxRadius} // max value of the API according to the docs
-                        step={1}
+                        min={this.minRadius}
+                        max={this.maxRadius}
+                        step={this.radiusStep}
                         defaultValue={this.defaultRadius}
                         value={this.state.radius}
                         onChange={this.handleRadiusChange} />
