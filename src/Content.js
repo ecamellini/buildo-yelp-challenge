@@ -4,9 +4,17 @@ import DisplayResults from './DisplayResults';
 import RangeSlider from './RangeSlider'
 import YelpConfig from './yelp-api-config.js';
 import YelpFusion from './yelp-fusion.js'
+import Snackbar from 'material-ui/Snackbar';
 
 
 // TODO: fill autoCompleteSource with location autocomplete information
+
+const STATE = {
+    HOME: 0,
+    RESULTS: 1,
+    DETAILS: 2,
+    NO_RESULTS: 4
+}
 
 /**
  * Content component:
@@ -18,7 +26,7 @@ class Content extends React.Component {
     maxRadius = 40; // max API value according to the docs
     minRadius = 1;
     radiusStep = 1;
-    categories = "food,restaurants" 
+    categories = "food,restaurants"
     resultsLimit = 50; // Max is 50
 
     constructor(props) {
@@ -28,12 +36,14 @@ class Content extends React.Component {
             autoCompleteSource: [],
             request: "",
             radius: this.defaultRadius,
-            results: []
+            results: [],
+            page: STATE.HOME
         };
 
         this.handleNewRequest = this.handleNewRequest.bind(this);
         this.handleUpdateInput = this.handleUpdateInput.bind(this);
         this.handleRadiusChange = this.handleRadiusChange.bind(this);
+        this.showItemDetails = this.showItemDetails.bind(this);
 
         // Setting up the API client instance
         YelpFusion.accessToken(YelpConfig.APP_ID, YelpConfig.APP_SECRET,
@@ -62,10 +72,14 @@ class Content extends React.Component {
             categories: this.categories, // Categories
             limit: this.resultsLimit // Max number of items returened
         }).then(response => {
+            let r = response.jsonBody.businesses;
+            let s = r.length > 0 ? STATE.RESULTS : STATE.NO_RESULTS
             this.setState({
                 request: value,
-                results: response.jsonBody.businesses
+                results: r,
+                page: s
             });
+            console.log(s);
         }).catch(e => {
             console.log(e);
         });
@@ -109,8 +123,11 @@ class Content extends React.Component {
      * 
      * @param {object} item the element of the results clicked by the user
      */
-    showItemDetails(item){
-        alert(item.name);
+    showItemDetails(item) {
+        this.setState({
+            page: STATE.DETAILS,
+            selectedItem: item
+        });
     }
 
     render() {
@@ -129,11 +146,22 @@ class Content extends React.Component {
                         defaultValue={this.defaultRadius}
                         value={this.state.radius}
                         onChange={this.handleRadiusChange} />
+                        
                 </div>
-                <DisplayResults request={this.state.request}
-                    radius={this.state.radius}
-                    results={this.state.results}
-                    onResultClick={this.showItemDetails}/>
+                {this.state.page === STATE.RESULTS &&
+                    <DisplayResults request={this.state.request}
+                        radius={this.state.radius}
+                        results={this.state.results}
+                        onResultClick={this.showItemDetails} />}
+                {this.state.page === STATE.DETAILS &&
+                    "DETAILS OF " + this.state.selectedItem.name}
+
+                <Snackbar
+                    open={this.state.page === STATE.NO_RESULTS}
+                    message="No results found for the inserted location."
+                    autoHideDuration={2000}
+                />
+
             </div>
         );
     }

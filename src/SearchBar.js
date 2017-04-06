@@ -13,7 +13,7 @@ class SearchBar extends React.Component {
             <div>
                 <AutoComplete
                     id="searchBar" // To fix a Material UI warning
-                    hintText="Where are you?"
+                    hintText="Insert a location and press enter"
                     searchText={this.props.searchText} // The value
                     dataSource={this.props.dataSource} // Source for the autocomplete
                     onUpdateInput={this.props.handleUpdateInput}
