@@ -13,7 +13,7 @@ class ItemDetails extends React.Component {
                 {this.props.item.image_url &&
                     (<img src={this.props.item.image_url}
                         alt={this.props.item.name + " image on Yelp"}
-                        style={{ width: 200 }} />)}<br />
+                        style={{ width: 200 }}/>)}<br />
                 {this.props.item.name}<br />
                 {this.props.item.display_phone}<br />
                 {this.props.item.is_closed ? "Closed now" : "Open now"}<br />
