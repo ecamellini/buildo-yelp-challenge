@@ -4,6 +4,10 @@ import Avatar from 'material-ui/Avatar';
 import images from './images.js';
 import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant-menu';
 import { Card, CardText } from 'material-ui/Card';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ArrowUp from 'material-ui/svg-icons/hardware/keyboard-arrow-up';
+import Colors from './colors.js'
+import Back2Top from 'react-back2top';
 
 
 const styles = {
@@ -19,12 +23,23 @@ const styles = {
         overflow: 'hidden',
         textOverflow: 'ellipsis'
     },
-    itemRating: { 
+    itemRating: {
         maxWidth: 100,
         marginLeft: 20,
         order: 1
+    },
+    list: {
+        position: 'relative',
+        zIndex: 0
+    },
+    upButton: {
+        position: 'fixed',
+        bottom: 10,
+        right: 10,
     }
 }
+
+
 /**
  * Component that, given a search request, interacts with the Yelp API
  * and displays the results.
@@ -53,9 +68,16 @@ class DisplayResults extends React.Component {
         return (
             <Card>
                 <CardText>
-                    <List>
+                    <List style={styles.list}>
                         {results}
                     </List>
+                    <Back2Top>
+                        <FloatingActionButton style={styles.upButton}
+                            zDepth={1}
+                            backgroundColor={Colors.BUILDO_RED} >
+                            <ArrowUp />
+                        </FloatingActionButton>
+                    </Back2Top>
                 </CardText>
             </Card>
         );

@@ -19,7 +19,7 @@ const styles = {
   },
   appBar: {
     backgroundColor: Colors.BUILDO_RED,
-    position: 'fixed', /* Set the navbar to fixed position */
+    position: 'fixed',
     top: 0
   }
 }

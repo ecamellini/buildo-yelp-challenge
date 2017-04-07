@@ -5,7 +5,7 @@ import Avatar from 'material-ui/Avatar';
 import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant-menu';
 import Colors from './colors.js'
 import IconButton from 'material-ui/IconButton';
-import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
+import ArrowBack from 'material-ui/svg-icons/hardware/keyboard-arrow-left';
 
 
 const styles = {
