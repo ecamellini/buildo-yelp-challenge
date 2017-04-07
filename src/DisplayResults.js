@@ -5,7 +5,7 @@ import images from './images.js';
 import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant-menu';
 import { Card, CardText } from 'material-ui/Card';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ArrowUp from 'material-ui/svg-icons/hardware/keyboard-arrow-up';
+import ArrowUp from 'material-ui/svg-icons/navigation/arrow-upward';
 import Colors from './colors.js'
 import Back2Top from 'react-back2top';
 

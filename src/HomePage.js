@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+import { Card, CardTitle } from 'material-ui/Card';
 
 
 const styles = {
