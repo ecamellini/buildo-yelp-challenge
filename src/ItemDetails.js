@@ -1,19 +1,10 @@
 import React from 'react';
 import images from './images.js'
-import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+import { Card, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
 import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant';
 import Colors from './colors.js'
 import menuIcon from './images/ic_restaurant_menu_grey_48px.svg'
-
-
-const styles = {
-    itemContainer: {
-        padding: 10,
-        maxWidth: 800,
-        margin: '0 auto'
-    }
-}
 
 
 /**
@@ -56,7 +47,6 @@ class ItemDetails extends React.Component {
             (this.props.item.review_count > 1 ? "s" : "")
             : "")
         return (
-            <div style={styles.itemContainer}>
                 <Card
                     expanded={this.state.expanded} onExpandChange={this.handleExpandChange}
                 >
@@ -93,7 +83,6 @@ class ItemDetails extends React.Component {
                         </a>
                     </CardText>
                 </Card>
-            </div>
         );
     }
 }

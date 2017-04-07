@@ -48,6 +48,7 @@ class RangeSlider extends React.Component {
                     defaultValue={this.props.defaultValue}
                     value={this.props.value} // Current value 
                     onChange={this.props.onChange} // Callback
+                    onDragStop={this.props.onDragStop}
                 />
                 <label style={styles.label}>
                     &nbsp;&nbsp;&nbsp;{this.props.value}km

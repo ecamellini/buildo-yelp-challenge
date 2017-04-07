@@ -7,14 +7,17 @@ import YelpFusion from './yelp-fusion.js'
 import Snackbar from 'material-ui/Snackbar';
 import ItemDetails from './ItemDetails'
 import Colors from './colors.js'
+import HomePage from './HomePage'
+
 
 // TODO: fill autoCompleteSource with location autocomplete information
+// TODO: split in two components
+
 
 const STATE = {
     HOME: 0,
     RESULTS: 1,
-    DETAILS: 2,
-    NO_RESULTS: 4
+    DETAILS: 2
 }
 
 
@@ -23,6 +26,11 @@ const styles = {
         backgroundColor: Colors.APP_GREY,
         display: 'flex',
         flexFlow: 'row wrap'
+    },
+    contentContainer: {
+        paddingTop: 10,
+        maxWidth: 1000,
+        margin: '0 auto'
     }
 }
 
@@ -38,7 +46,7 @@ class Content extends React.Component {
     minRadius = 1;
     radiusStep = 1;
     categories = "food,restaurants"
-    resultsLimit = 50; // Max is 50
+    resultsLimit = 50; // max API value according to the docs
 
     constructor(props) {
         super(props);
@@ -48,7 +56,8 @@ class Content extends React.Component {
             request: "",
             radius: this.defaultRadius,
             results: [],
-            page: STATE.HOME
+            page: STATE.HOME,
+            message: "",
         };
 
         this.handleNewRequest = this.handleNewRequest.bind(this);
@@ -86,15 +95,19 @@ class Content extends React.Component {
         }).then(response => {
             let r = response.jsonBody.businesses;
             //console.log(JSON.stringify(r[1], null, 4));
-            let s = r.length > 0 ? STATE.RESULTS : STATE.NO_RESULTS
+            let s = r.length > 0 ? STATE.RESULTS : this.state.page
+            let m = r.length > 0 ? "" : "No results found for the inserted location"
             this.setState({
                 request: value,
                 results: r,
-                page: s
+                page: s,
+                message: m
             });
         }).catch(e => {
             console.log(e);
-            this.setState({page: STATE.NO_RESULTS});
+            this.setState({
+                message: "Error while interfacing with Yelp"
+            });
         });
     }
 
@@ -124,10 +137,6 @@ class Content extends React.Component {
         this.setState({
             radius: value,
         });
-        // This call is to update the displayed results for every change in radius
-        if (this.state.request) {
-            this.handleNewRequest(this.state.request);
-        }
     }
 
     /**
@@ -145,11 +154,7 @@ class Content extends React.Component {
 
     render() {
         return (
-            <div /*style={{
-                display: 'flex',
-                flexFlow: 'column',
-                height: 500
-            }}*/>
+            <div>
                 <div style={styles.inputArea}>
                     <SearchBar
                         handleNewRequest={this.handleNewRequest}
@@ -162,12 +167,15 @@ class Content extends React.Component {
                         step={this.radiusStep}
                         defaultValue={this.defaultRadius}
                         value={this.state.radius}
-                        onChange={this.handleRadiusChange} />
+                        onChange={this.handleRadiusChange}
+                        onDragStop={() => {
+                            // This call is to update the displayed results for every change in radius
+                            if (this.state.request) {
+                                this.handleNewRequest(this.state.request);
+                            }
+                        }} />
                 </div>
-                <div /*style={{
-                    flex: 1,
-                    overflow: 'auto'
-                }}*/>
+                <div style={styles.contentContainer}>
                     {this.state.page === STATE.RESULTS &&
                         <DisplayResults request={this.state.request}
                             radius={this.state.radius}
@@ -175,11 +183,20 @@ class Content extends React.Component {
                             onResultClick={this.showItemDetails} />}
                     {this.state.page === STATE.DETAILS &&
                         <ItemDetails item={this.state.selectedItem} />}
+                    {this.state.page === STATE.HOME &&
+                        <HomePage />}
                 </div>
                 <Snackbar
-                    open={this.state.page === STATE.NO_RESULTS}
-                    message="No results found for the inserted location."
+                    open={this.state.message.length > 0}
+                    message={this.state.message}
                     autoHideDuration={2000}
+                    onRequestClose={() => {
+                        this.setState({
+                            message: "",
+                            page: (this.state.results.length === 0 &&
+                                !this.state.selectedItem) ? STATE.HOME : this.state.page
+                        });
+                    }}
                 />
 
             </div>
