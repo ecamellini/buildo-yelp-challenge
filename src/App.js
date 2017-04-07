@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
@@ -13,16 +12,29 @@ import Colors from './colors.js'
 // http://stackoverflow.com/a/34015469/988941
 injectTapEventPlugin();
 
+
+const styles = {
+  app: {
+    textAlign: 'center'
+  },
+  appBar: {
+    backgroundColor: Colors.BUILDO_RED,
+    position: 'fixed', /* Set the navbar to fixed position */
+    top: 0
+  }
+}
+
+
 class App extends React.Component {
   render() {
     return (
       <MuiThemeProvider>
-        <div className="App">
+        <div style={styles.app}>
           <AppBar
             iconElementLeft={<IconButton><RestaurantIcon /></IconButton>}
-            style={{ backgroundColor: Colors.BUILDO_RED }}
+            style={styles.appBar}
           />
-          <Content />
+          <Content marginTop={60} />
         </div>
       </MuiThemeProvider>
     );

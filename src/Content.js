@@ -25,10 +25,10 @@ const styles = {
     inputArea: {
         backgroundColor: Colors.APP_GREY,
         display: 'flex',
-        flexFlow: 'row wrap'
+        flexFlow: 'row wrap',
     },
     contentContainer: {
-        paddingTop: 10,
+        padding: 10,
         maxWidth: 1000,
         margin: '0 auto'
     }
@@ -99,14 +99,14 @@ class Content extends React.Component {
             let m = r.length > 0 ? "" : "No results found for the inserted location"
             this.setState({
                 request: value,
-                results: r,
+                results: r.length > 0 ? r : this.state.results,
                 page: s,
-                message: m
+                message: m,
             });
         }).catch(e => {
             console.log(e);
             this.setState({
-                message: "Error while interfacing with Yelp"
+                message: "Error while interfacing with Yelp",
             });
         });
     }
@@ -154,7 +154,7 @@ class Content extends React.Component {
 
     render() {
         return (
-            <div>
+            <div style={{marginTop: this.props.marginTop}}>
                 <div style={styles.inputArea}>
                     <SearchBar
                         handleNewRequest={this.handleNewRequest}
@@ -191,6 +191,8 @@ class Content extends React.Component {
                     message={this.state.message}
                     autoHideDuration={2000}
                     onRequestClose={() => {
+                        console.log(this.state.results);
+                        console.log(this.state.selectedItem);
                         this.setState({
                             message: "",
                             page: (this.state.results.length === 0 &&

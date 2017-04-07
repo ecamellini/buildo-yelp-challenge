@@ -6,8 +6,7 @@ const styles = {
     searchBar: {
         alignSelf: 'center',
         order: 0,
-        flex: '1 6 30%',
-        padding: 10,
+        flex: '1 6 30%'
     }
 }
 

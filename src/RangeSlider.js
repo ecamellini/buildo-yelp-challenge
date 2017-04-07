@@ -7,7 +7,6 @@ const styles = {
     container: {
         order: 1,
         flex: '3 1 60%',
-
         display: 'flex',
         flexFlow: 'row',
         justifyContent: 'center',
@@ -18,7 +17,9 @@ const styles = {
         alignSelf: 'center',
         order: 0,
         flex: '0.6',
-        paddingTop: 25
+        paddingBottom: 15,
+        maxHeight: 50,
+        minWidth: 200
     },
     label: {
         alignSelf: 'center',
