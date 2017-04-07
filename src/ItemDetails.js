@@ -1,9 +1,11 @@
 import React from 'react';
 import images from './images.js'
-import { Card, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+import { Card, CardHeader, CardMedia, CardTitle, CardText, CardActions } from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
 import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant-menu';
 import Colors from './colors.js'
+import IconButton from 'material-ui/IconButton';
+import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 
 
 const styles = {
@@ -11,13 +13,19 @@ const styles = {
         textAlign: 'left'
     },
     cardText: {
-        color: Colors.APP_GREY_TEXT
+        color: Colors.APP_GREY_TEXT,
+        margin: 0,
+        padding: 0,
+        paddingTop: 10,
     },
     yelpStars: {
         maxWidth: 200
     },
     yelpLogo: {
         maxWidth: 100
+    },
+    cardActions: {
+        textAlign: 'left'
     }
 }
 
@@ -96,6 +104,12 @@ class ItemDetails extends React.Component {
                             style={styles.yelpLogo} />
                     </a>
                 </CardText>
+                <CardActions style={styles.cardActions}>
+                    <IconButton tooltip="Back to results list"
+                        onClick={this.props.backToResults}>
+                        <ArrowBack />
+                    </IconButton>
+                </CardActions>
             </Card>
         );
     }

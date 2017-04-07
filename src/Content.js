@@ -182,7 +182,12 @@ class Content extends React.Component {
                             results={this.state.results}
                             onResultClick={this.showItemDetails} />}
                     {this.state.page === STATE.DETAILS &&
-                        <ItemDetails item={this.state.selectedItem} />}
+                        <ItemDetails item={this.state.selectedItem} 
+                        backToResults={() => {
+                            this.setState({
+                                page: STATE.RESULTS
+                            });
+                        }}/>}
                     {this.state.page === STATE.HOME &&
                         <HomePage />}
                 </div>
