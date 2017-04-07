@@ -143,7 +143,11 @@ class Content extends React.Component {
 
     render() {
         return (
-            <div>
+            <div /*style={{
+                display: 'flex',
+                flexFlow: 'column',
+                height: 500
+            }}*/>
                 <div style={styles.inputArea}>
                     <SearchBar
                         handleNewRequest={this.handleNewRequest}
@@ -158,15 +162,18 @@ class Content extends React.Component {
                         value={this.state.radius}
                         onChange={this.handleRadiusChange} />
                 </div>
-                <br />
-                {this.state.page === STATE.RESULTS &&
-                    <DisplayResults request={this.state.request}
-                        radius={this.state.radius}
-                        results={this.state.results}
-                        onResultClick={this.showItemDetails} />}
-                {this.state.page === STATE.DETAILS &&
-                    <ItemDetails item={this.state.selectedItem} />}
-
+                <div /*style={{
+                    flex: 1,
+                    overflow: 'auto'
+                }}*/>
+                    {this.state.page === STATE.RESULTS &&
+                        <DisplayResults request={this.state.request}
+                            radius={this.state.radius}
+                            results={this.state.results}
+                            onResultClick={this.showItemDetails} />}
+                    {this.state.page === STATE.DETAILS &&
+                        <ItemDetails item={this.state.selectedItem} />}
+                </div>
                 <Snackbar
                     open={this.state.page === STATE.NO_RESULTS}
                     message="No results found for the inserted location."
