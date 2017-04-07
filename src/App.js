@@ -6,6 +6,8 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import Content from './Content';
 import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant';
 import Colors from './colors.js'
+import Drawer from 'material-ui/Drawer';
+import MenuItem from 'material-ui/MenuItem';
 
 
 // Needed for onTouchTap (Material UI)
@@ -26,15 +28,39 @@ const styles = {
 
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false
+    };
+  }
+
+  handleToggle = () => this.setState({ open: !this.state.open });
+
+  handleClose = () => this.setState({ open: false });
+
   render() {
     return (
       <MuiThemeProvider>
         <div style={styles.app}>
           <AppBar
             iconElementLeft={<IconButton><RestaurantIcon /></IconButton>}
+            onLeftIconButtonTouchTap={this.handleToggle}
             style={styles.appBar}
           />
           <Content marginTop={60} />
+          <Drawer
+            open={this.state.open}
+            docked={false}
+            onRequestChange={(open) => this.setState({ open })}
+          >
+            <MenuItem onTouchTap={() => {
+              window.location = "https://ecamellini.github.io"
+            }}>Credits</MenuItem>
+            <MenuItem onTouchTap={() => {
+              window.location = "https://github.com/ecamellini/buildo-yelp-challenge"
+            }}>Source code</MenuItem>
+          </Drawer>
         </div>
       </MuiThemeProvider>
     );
