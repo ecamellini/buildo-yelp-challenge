@@ -5,6 +5,7 @@ import IconButton from 'material-ui/IconButton';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import Content from './Content';
 import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant';
+import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import Colors from './colors.js'
 
 

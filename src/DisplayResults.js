@@ -2,7 +2,7 @@ import React from 'react';
 import { List, ListItem } from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import images from './images.js';
-import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant';
+import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant-menu';
 import { Card, CardText } from 'material-ui/Card';
 
 

@@ -2,9 +2,8 @@ import React from 'react';
 import images from './images.js'
 import { Card, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
-import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant';
+import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant-menu';
 import Colors from './colors.js'
-import MenuIcon from './images/ic_restaurant_menu_grey_48px.svg'
 
 
 const styles = {
@@ -55,7 +54,7 @@ class ItemDetails extends React.Component {
         const open_string = this.props.item.is_closed ? "Closed now" :
             "Open now";
         const headerSubtitle = this.props.item.price ?
-            "Price range: " + this.props.item.price : "";
+            "Price range: " + this.props.item.price : "No price information";
         const subtitle = address + ". " + this.props.item.display_phone
         const reviewsString = (this.props.item.review_count > 0 ?
             "Based on " + this.props.item.review_count + " review" +
@@ -70,8 +69,8 @@ class ItemDetails extends React.Component {
                     subtitle={<b>{headerSubtitle}</b>}
                     title={<b>{open_string}</b>}
                     avatar={<Avatar icon={<RestaurantIcon />} />}
-                    actAsExpander={true}
-                    showExpandableButton={true}
+                    actAsExpander={this.props.item.image_url.length > 0}
+                    showExpandableButton={this.props.item.image_url.length > 0}
                 />
                 {/*If the restaurant has an image we render the CardMedia with,
                        * title and subtitle overlayed on the image, 
@@ -81,7 +80,7 @@ class ItemDetails extends React.Component {
                     overlay={<CardTitle
                         title={this.props.item.name}
                         subtitle={subtitle} />}>
-                    <img src={this.props.item.image_url || MenuIcon}
+                    <img src={this.props.item.image_url}
                         alt={this.props.item.name + " image on Yelp"} />
                 </CardMedia>
                 {!this.state.expanded &&
