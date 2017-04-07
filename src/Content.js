@@ -8,7 +8,6 @@ import Snackbar from 'material-ui/Snackbar';
 import ItemDetails from './ItemDetails'
 import Colors from './colors.js'
 
-
 // TODO: fill autoCompleteSource with location autocomplete information
 
 const STATE = {
@@ -63,6 +62,7 @@ class Content extends React.Component {
                 this.yelpClient = YelpFusion.client(
                     response.jsonBody.access_token,
                     YelpConfig.CORS_PROXY_URL);
+                console.log("Yelp API client ready.")
             }).catch(e => {
                 console.log(e);
             });
@@ -85,6 +85,7 @@ class Content extends React.Component {
             limit: this.resultsLimit // Max number of items returened
         }).then(response => {
             let r = response.jsonBody.businesses;
+            //console.log(JSON.stringify(r[1], null, 4));
             let s = r.length > 0 ? STATE.RESULTS : STATE.NO_RESULTS
             this.setState({
                 request: value,
@@ -93,6 +94,7 @@ class Content extends React.Component {
             });
         }).catch(e => {
             console.log(e);
+            this.setState({page: STATE.NO_RESULTS});
         });
     }
 
