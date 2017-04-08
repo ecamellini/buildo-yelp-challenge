@@ -8,7 +8,6 @@ import { PAGE, RADIUS_PROPS, YELP_API, STRINGS } from './constants.js'
 import { MESSAGE_DURATION } from './constants.js'
 
 
-// TODO: cache token
 /**
  * Content component: it contains the top input area and the page.
  * The state attribute page controls what page should be rendered.
