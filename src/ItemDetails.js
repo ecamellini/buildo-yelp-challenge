@@ -65,8 +65,10 @@ class ItemDetails extends React.Component {
             this.props.item.location.display_address[2]);
         const open_string = this.props.item.is_closed ? "Closed now" :
             "Open now";
-        const headerSubtitle = this.props.item.price ?
-            "Price range: " + this.props.item.price : "No price information";
+        const headerSubtitle = (this.props.item.price ?
+            "Price range: " + this.props.item.price : "No price information") +
+            (this.props.item.distance ? " ● Distance: " +
+                Math.round(this.props.item.distance) + "m" : "");
         const subtitle = address + ". " + this.props.item.display_phone
         const reviewsString = (this.props.item.review_count > 0 ?
             "Based on " + this.props.item.review_count + " review" +
