@@ -20,16 +20,9 @@ To install it follow the instructions on the [Node.js](https://nodejs.org/en/) a
 4. Modify the file `src/yelp-api-config.js` and substitute the three placeholders:
     * `<YOUR_APP_ID>` and `<YOUR_APP_SECRET>` should be substituted with your Yelp Fusion API App ID and App Secret. You can generate them [here](https://www.yelp.it/developers/v3/manage_app);
     * `<YOUR_CORS_PROXY>` should be substituted with the base URL of your [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS) proxy. It is needed because the API does not support CORS or JSONP, which means that it cannot be directly used in the front-end. Another solution would be to leave this field empty and to modify this app in order to perform the API calls on the server side (this app has no server, so you should also build one);
-5. Build the **production** version by executing the commnand `npm run build` (In the current version, this command doesn't work because of a configuration problem. See **problems** section for details. In the meantime, you can execute `npm start` instead.);
+5. Build the **production** version by executing the commnand `npm run build`
 6. Serve the app by executing `serve -s build` (install `serve` by running `npm install -g serve`, if you don't have it already);
 7. Open the following address on your browser: [htpp://localhost:5000](htpp://localhost:5000). If you did everything correctly, you should now be able to use the app.
-
-## Problems
-
-The default configuration of [create-react-app](https://github.com/facebookincubator/create-react-app) does not pass the node modules that the project requires through [Babel](https://babeljs.io/). This causes the `npm run build` command to fail because of the [@tonybadguy/call-me-maybe](https://github.com/tonybadguy/call-me-maybe) module used by the yelp fusion API implementation available on npm ([this module](https://www.npmjs.com/package/yelp-fusion), which is also the one used in the [official example](https://github.com/Yelp/yelp-fusion); in this repository you can find it in the `src/yelp-fusion.js` file: I had to modify it to allow the use of a CORS proxy, so I didn't install it through npm).
-
-In the *branch* `no-yelp-fusion` I implemented a version of this app that does not rely on the above mentioned module, but it does not work correctly and I am still trying to solve the problem. In the meantime, the `npm start` command can be used to run a non-optimized version of the app, not suitable for production environments.
-
 
 ## Development
 
@@ -53,3 +46,7 @@ The User Interface contains four main components: an **app bar**, an **input are
 * In the **results page** it is possible to scoll down and, if necessary, show more results by clicking on the corresponding button. A click on one of the displayed businesses results in the redirection to the business details page. While scolling, a button to go back to the top of the page will be displayed.
 
 * The **item details page** can be accessed by clicking on one of the results. It shows the selected item information. If the item comes with an image, it is possible to display it by tapping on the top-left arrow, while the Yelp logo redirects to the corresponding Yelp page. The left arrow can be used to return to the results list. 
+
+## Problems
+
+The default configuration of [create-react-app](https://github.com/facebookincubator/create-react-app) does not pass the node modules that the project requires through [Babel](https://babeljs.io/). This causes the `npm run build` command to fail when using the yelp fusion API implementation available on npm ([this module](https://www.npmjs.com/package/yelp-fusion), which is also the one used in the [official example](https://github.com/Yelp/yelp-fusion)). I think it is because it was not meant to be used in the front-end. Eventually, I decided to implement the API interaction by myself.

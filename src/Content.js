@@ -5,7 +5,7 @@ import YELP_CONFIG from './yelp-api-config.js';
 import DisplayMessage from './DisplayMessage'
 import { PAGE, RADIUS_PROPS, YELP_API, STRINGS } from './constants.js'
 import { MESSAGE_DURATION } from './constants.js'
-import {paramsToString, makeRequest} from './request.js'
+import { paramsToString, makeRequest } from './request.js'
 
 
 /**
@@ -39,7 +39,7 @@ class Content extends React.Component {
     componentDidMount() {
         makeRequest({
             method: "POST",
-            url: YELP_CONFIG.CORS_PROXY_URL + "https://api.yelp.com/oauth2/token",
+            url: YELP_CONFIG.CORS_PROXY_URL + YELP_API.AUTH_URL,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
@@ -78,8 +78,8 @@ class Content extends React.Component {
         });
         makeRequest({
             method: "GET",
-            url: YELP_CONFIG.CORS_PROXY_URL + "https://api.yelp.com/v3/businesses/search"
-            + "?" + params,
+            url: (YELP_CONFIG.CORS_PROXY_URL + YELP_API.SEARCH_URL
+                + "?" + params), // params here otherwise 400 error, don't know why...
             headers: {
                 'Authorization': this.apiToken.token_type + " " + this.apiToken.access_token
             }
