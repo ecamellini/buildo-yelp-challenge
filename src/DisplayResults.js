@@ -6,6 +6,7 @@ import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant-menu';
 import { Card, CardText } from 'material-ui/Card';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ArrowUp from 'material-ui/svg-icons/navigation/arrow-upward';
+import ArrowDown from 'material-ui/svg-icons/hardware/keyboard-arrow-down';
 import Colors from './colors.js'
 import Back2Top from 'react-back2top';
 
@@ -72,6 +73,13 @@ class DisplayResults extends React.Component {
                     <List style={styles.list}>
                         {results}
                     </List>
+                    <FloatingActionButton
+                        zDepth={1}
+                        backgroundColor={Colors.BUILDO_RED}
+                        onTouchTap={this.props.showMore}
+                        disabled={!this.props.showMoreEnabled}>
+                        <ArrowDown />
+                    </FloatingActionButton>
                     <Back2Top>
                         <FloatingActionButton style={styles.upButton}
                             zDepth={1}

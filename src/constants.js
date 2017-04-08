@@ -15,7 +15,7 @@ const RADIUS_PROPS = {
 
 const YELP_API = {
     CATEGORIES: "food,restaurants",
-    RESULTS_LIMIT: 50 // max API value is 50 according to the docs
+    RESULTS_LIMIT: 20 // max API value is 50 according to the docs
 }
 
 

@@ -26,7 +26,9 @@ class Page extends React.Component {
                         <DisplayResults request={this.props.request}
                             radius={this.props.radius}
                             results={this.props.results}
-                            onResultClick={this.props.onResultClick} />}
+                            onResultClick={this.props.onResultClick}
+                            showMore={this.props.showMore}
+                            showMoreEnabled={this.props.showMoreEnabled} />}
                     {this.props.page === PAGE.DETAILS &&
                         <ItemDetails item={this.props.item}
                             backToResults={this.props.backToResults} />}

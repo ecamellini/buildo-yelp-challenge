@@ -36,7 +36,9 @@ class Content extends React.Component {
             results: [], // search results
             page: PAGE.HOME, // rendered page
             message: "", // auto-hiding message displayed at the bottom
-            selectedItem: "" // item selected from the results list
+            selectedItem: "", // item selected from the results list
+            offset: 0, // Current position in the results list
+            total: 0 //total results
         };
     }
 
@@ -55,6 +57,47 @@ class Content extends React.Component {
     }
 
     /**
+         * Yelp search API interaction. Value is the location,
+         * offset is the position in the list of results.
+         */
+    yelpSearch = (value, offset) => {
+        this.yelpClient.search({
+            location: value,  // Location inserted by the user
+            radius: (this.state.radius * 1000), // Radius selected in the slider
+            categories: YELP_API.CATEGORIES, // Categories
+            limit: YELP_API.RESULTS_LIMIT, // Max number of items returened
+            offset: offset
+        }).then(response => {
+            let results = response.jsonBody.businesses;
+            let total = response.jsonBody.total;
+            console.log("Total results: " + total)
+            console.log("Offset: " + offset)
+            //console.log(JSON.stringify(r[1], null, 4));
+
+            // We go to the results page only if there are results,
+            // otherwise we display a message
+            if (results.length > 0) {
+                if (offset > 0 && offset < total) {
+                    const previous_results = this.state.results.slice();
+                    results = previous_results.concat(results);
+                }
+                this.setState({
+                    total: total,
+                    request: value,
+                    results: results,
+                    page: PAGE.RESULTS,
+                    offset: offset
+                });
+            } else {
+                this.displayMessage(STRINGS.NO_RESULTS)
+            }
+        }).catch(e => {
+            console.log(e);
+            this.displayMessage(STRINGS.API_REQUEST_ERROR)
+        });
+    }
+
+    /**
      * Callback passed to the SearchBar. It is triggered when the
      * user presses enter and starts the search.
      * 
@@ -64,30 +107,12 @@ class Content extends React.Component {
      * @param {string} value The searched value
      */
     handleNewRequest = (value) => {
-        this.yelpClient.search({
-            location: value,  // Location inserted by the user
-            radius: (this.state.radius * 1000), // Radius selected in the slider
-            categories: YELP_API.CATEGORIES, // Categories
-            limit: YELP_API.RESULTS_LIMIT // Max number of items returened
-        }).then(response => {
-            let results = response.jsonBody.businesses;
-            //console.log(JSON.stringify(r[1], null, 4));
+        this.yelpSearch(value, 0)
+    }
 
-            // We go to the results page only if there are results,
-            // otherwise we display a message
-            if (results.length > 0) {
-                this.setState({
-                    request: value,
-                    results: results.length > 0 ? results : this.state.results,
-                    page: PAGE.RESULTS,
-                });
-            } else {
-                this.displayMessage(STRINGS.NO_RESULTS)
-            }
-        }).catch(e => {
-            console.log(e);
-            this.displayMessage(STRINGS.API_REQUEST_ERROR)
-        });
+    showMoreResults = () => {
+        this.yelpSearch(this.state.request, this.state.offset +
+            YELP_API.RESULTS_LIMIT);
     }
 
     /**
@@ -199,6 +224,10 @@ class Content extends React.Component {
                     onResultClick={this.showItemDetails}
                     item={this.state.selectedItem}
                     backToResults={this.backToResults}
+                    showMore={this.showMoreResults}
+                    // If we already displayed everything we disable the show more button
+                    showMoreEnabled={(this.state.offset +
+                        YELP_API.RESULTS_LIMIT < this.state.total)}
                 />
                 <DisplayMessage // This is not visible when message is empty
                     message={this.state.message}
