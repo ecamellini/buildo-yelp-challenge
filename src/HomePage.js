@@ -1,5 +1,6 @@
 import React from 'react'
 import { Card, CardTitle } from 'material-ui/Card';
+import { STRINGS } from './constants'
 
 
 const styles = {
@@ -10,14 +11,18 @@ const styles = {
     }
 }
 
+
+/**
+ * Homepage component: it displays a title and a message
+ * defined in the constants file.
+ */
 class HomePage extends React.Component {
     render() {
         return (
             <Card style={styles.homeCard}>
                 <CardTitle
-                    title={"Welcome to " + document.title}
-                    subtitle={"Enter a location in the search bar, select the radius and press enter. " +
-                        "Displayed results are updated dynamically according to range variations."} />
+                    title={STRINGS.HOME_TITLE}
+                    subtitle={STRINGS.HOME_TEXT} />
             </Card>
         );
     }

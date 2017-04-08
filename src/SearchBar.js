@@ -17,13 +17,16 @@ const styles = {
  * SearchBar component: 
  * it contains a field where the user can type the
  * item to be searched.
+ * 
+ * This component is controlled by another component that should pass
+ * searchText (real time value), onUpdateInput and onNewRequest.
  */
 class SearchBar extends React.Component {
     render() {
         return (
             <div style={styles.searchBar}>
                 <AutoComplete
-                    hintText="Insert a location and press enter"
+                    hintText={this.props.hintText ? this.props.hintText : ""}
                     searchText={this.props.searchText} // The value
                     dataSource={this.props.dataSource} // Source for the autocomplete
                     onUpdateInput={this.props.handleUpdateInput}

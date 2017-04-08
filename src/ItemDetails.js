@@ -6,6 +6,7 @@ import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant-menu';
 import Colors from './colors.js'
 import IconButton from 'material-ui/IconButton';
 import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
+import { STRINGS } from './constants'
 
 
 const styles = {
@@ -29,9 +30,10 @@ const styles = {
     }
 }
 
+
 /**
  * Component that displays a given item returned by the
- * Yelp search API 
+ * Yelp search API.
  */
 class ItemDetails extends React.Component {
     constructor(props) {
@@ -40,21 +42,23 @@ class ItemDetails extends React.Component {
             expanded: false,
         };
     }
+
+    /**
+     * ALL the following methods handle the item Card expand/reduce events
+     */
     handleExpandChange = (expanded) => {
         this.setState({ expanded: expanded });
     };
-
     handleToggle = (event, toggle) => {
         this.setState({ expanded: toggle });
     };
-
     handleExpand = () => {
         this.setState({ expanded: true });
     };
-
     handleReduce = () => {
         this.setState({ expanded: false });
     };
+
     render() {
         const address = (this.props.item.location.display_address[0] + ", " +
             this.props.item.location.display_address[1] + ", " +
@@ -77,21 +81,25 @@ class ItemDetails extends React.Component {
                     subtitle={<b>{headerSubtitle}</b>}
                     title={<b>{open_string}</b>}
                     avatar={<Avatar icon={<RestaurantIcon />} />}
+                    /* We make the card expandable only if the item
+                    has an associated image */
                     actAsExpander={this.props.item.image_url.length > 0}
                     showExpandableButton={this.props.item.image_url.length > 0}
                 />
-                {/*If the restaurant has an image we render the CardMedia with,
-                       * title and subtitle overlayed on the image, 
-                       * otherwise we render just the title and subtitle.*/
-                }
-                <CardMedia expandable={true}
+                <CardMedia
+                    /* In case the item has no image the card is not expandable,
+                    so this media will not be displayable. */
+                    expandable={true}
                     overlay={<CardTitle
                         title={this.props.item.name}
                         subtitle={subtitle} />}>
                     <img src={this.props.item.image_url}
                         alt={this.props.item.name + " image on Yelp"} />
                 </CardMedia>
-                {!this.state.expanded &&
+                {/* The title is shown only when the card is not expanded, since
+                    when it is expanded we show the same info in the CardMedia
+                    ovewlay*/
+                    !this.state.expanded &&
                     <CardTitle title={this.props.item.name} subtitle={subtitle} />}
                 <CardText style={styles.cardText}>
                     <img src={images.getStars(this.props.item.rating)}
@@ -100,12 +108,12 @@ class ItemDetails extends React.Component {
                     {reviewsString}<br />
                     <a href={this.props.item.url}>
                         <img src={images.yelpLogo.logoOutlined}
-                            alt={"Yelp logo tm"}
+                            alt={STRINGS.YELP_LOGO}
                             style={styles.yelpLogo} />
                     </a>
                 </CardText>
                 <CardActions style={styles.cardActions}>
-                    <IconButton tooltip="Back to results list"
+                    <IconButton tooltip={STRINGS.BACK_TO_RESULTS}
                         onClick={this.props.backToResults}>
                         <ArrowBack />
                     </IconButton>

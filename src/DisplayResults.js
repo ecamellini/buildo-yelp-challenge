@@ -41,8 +41,9 @@ const styles = {
 
 
 /**
- * Component that, given a search request, interacts with the Yelp API
- * and displays the results.
+ * Component that displays a list of Yelp API results given
+ * as a property. The onResultClick property sets an onClick callback
+ * for every item displayed.
  */
 class DisplayResults extends React.Component {
     render() {

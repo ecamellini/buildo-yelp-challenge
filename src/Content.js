@@ -1,78 +1,55 @@
 import React from 'react';
-import SearchBar from './SearchBar';
-import DisplayResults from './DisplayResults';
-import RangeSlider from './RangeSlider'
-import YelpConfig from './yelp-api-config.js';
+import InputArea from './InputArea'
+import Page from './Page'
+import YELP_CONFIG from './yelp-api-config.js';
 import YelpFusion from './yelp-fusion.js'
-import Snackbar from 'material-ui/Snackbar';
-import ItemDetails from './ItemDetails'
-import Colors from './colors.js'
-import HomePage from './HomePage'
+import DisplayMessage from './DisplayMessage'
+import { PAGE, RADIUS_PROPS, YELP_API, STRINGS } from './constants.js'
+import { MESSAGE_DURATION } from './constants.js'
 
 
-// TODO: fill autoCompleteSource with location autocomplete information
-// TODO: split in two components
+// TODO: cache token
+// TODO: show more button
+// TODO: handle lat long
 
-
-const STATE = {
-    HOME: 0,
-    RESULTS: 1,
-    DETAILS: 2
-}
-
-
-const styles = {
-    inputArea: {
-        backgroundColor: Colors.APP_GREY,
-        display: 'flex',
-        flexFlow: 'row wrap',
-    },
-    contentContainer: {
-        padding: 10,
-        maxWidth: 1000,
-        margin: '0 auto'
-    }
-}
 
 
 /**
- * Content component:
- * it contains the search bar, the radius slider 
- * and the area where to display the search results.
+ * Content component: it contains the top input area and the page.
+ * The state attribute page controls what page should be rendered.
+ * 
+ * This is also the component that encloses all the state of the app: 
+ * the search query and value, the radius, the results returned from Yelp
+ * and the item selected in the list.
  */
 class Content extends React.Component {
-    defaultRadius = 5;
-    maxRadius = 40; // max API value according to the docs
-    minRadius = 1;
-    radiusStep = 1;
-    categories = "food,restaurants"
-    resultsLimit = 50; // max API value according to the docs
+
 
     constructor(props) {
         super(props);
         this.state = {
-            searchText: "",
-            autoCompleteSource: [],
-            request: "",
-            radius: this.defaultRadius,
-            results: [],
-            page: STATE.HOME,
-            message: "",
+            searchText: "", // current value in the search box
+            autoCompleteSource: [], // autocomplete source for the search box
+            request: "", /* search query, filled when the user presses enter 
+            while writing in the search box*/
+            radius: RADIUS_PROPS.defaultRadius, // current radius in the slider
+            results: [], // search results
+            page: PAGE.HOME, // rendered page
+            message: "", // auto-hiding message displayed at the bottom
+            selectedItem: "" // item selected from the results list
         };
+    }
 
-        this.handleNewRequest = this.handleNewRequest.bind(this);
-        this.handleUpdateInput = this.handleUpdateInput.bind(this);
-        this.handleRadiusChange = this.handleRadiusChange.bind(this);
-        this.showItemDetails = this.showItemDetails.bind(this);
-
+    componentDidMount() {
         // Setting up the API client instance
-        YelpFusion.accessToken(YelpConfig.APP_ID, YelpConfig.APP_SECRET,
-            YelpConfig.CORS_PROXY_URL).then(response => {
+        YelpFusion.accessToken(YELP_CONFIG.APP_ID, YELP_CONFIG.APP_SECRET,
+            YELP_CONFIG.CORS_PROXY_URL).then(response => {
                 this.yelpClient = YelpFusion.client(
                     response.jsonBody.access_token,
-                    YelpConfig.CORS_PROXY_URL);
-                console.log("Yelp API client ready.")
+                    YELP_CONFIG.CORS_PROXY_URL);
+                console.log(STRINGS.API_READY)
             }).catch(e => {
+                this.displayMessage(STRINGS.API_SETUP_ERROR)
                 console.log(e);
             });
     }
@@ -82,32 +59,34 @@ class Content extends React.Component {
      * user presses enter and starts the search.
      * 
      * This is the method that also performs API call to search for
-     * restaurants.
+     * restaurants and go to the results page if necessary.
      * 
      * @param {string} value The searched value
      */
-    handleNewRequest(value) {
+    handleNewRequest = (value) => {
         this.yelpClient.search({
             location: value,  // Location inserted by the user
             radius: (this.state.radius * 1000), // Radius selected in the slider
-            categories: this.categories, // Categories
-            limit: this.resultsLimit // Max number of items returened
+            categories: YELP_API.CATEGORIES, // Categories
+            limit: YELP_API.RESULTS_LIMIT // Max number of items returened
         }).then(response => {
-            let r = response.jsonBody.businesses;
+            let results = response.jsonBody.businesses;
             //console.log(JSON.stringify(r[1], null, 4));
-            let s = r.length > 0 ? STATE.RESULTS : this.state.page
-            let m = r.length > 0 ? "" : "No results found for the inserted location"
-            this.setState({
-                request: value,
-                results: r.length > 0 ? r : this.state.results,
-                page: s,
-                message: m,
-            });
+
+            // We go to the results page only if there are results,
+            // otherwise we display a message
+            if (results.length > 0) {
+                this.setState({
+                    request: value,
+                    results: results.length > 0 ? results : this.state.results,
+                    page: PAGE.RESULTS,
+                });
+            } else {
+                this.displayMessage(STRINGS.NO_RESULTS)
+            }
         }).catch(e => {
             console.log(e);
-            this.setState({
-                message: "Error while interfacing with Yelp",
-            });
+            this.displayMessage(STRINGS.API_REQUEST_ERROR)
         });
     }
 
@@ -117,7 +96,7 @@ class Content extends React.Component {
      * 
      * @param {string} value The value in the search bar
      */
-    handleUpdateInput(value) {
+    handleUpdateInput = (value) => {
         this.setState({
             searchText: value,
         });
@@ -127,13 +106,10 @@ class Content extends React.Component {
      * Callback passed to the RangeSlider. It is triggered when the
      * user changes the value of the Slider.
      * 
-     * It also calls handleNewRequest so that the displayed results are
-     * directly updated if the user already searched something.
-     * 
+     * @param {object} event the event that triggered this change
      * @param {string} value The value in the search bar
-     * @param {object} the event that triggered this change
      */
-    handleRadiusChange(event, value) {
+    handleRadiusChange = (event, value) => {
         this.setState({
             radius: value,
         });
@@ -145,67 +121,90 @@ class Content extends React.Component {
      * 
      * @param {object} item the element of the results clicked by the user
      */
-    showItemDetails(item) {
+    showItemDetails = (item) => {
         this.setState({
-            page: STATE.DETAILS,
+            page: PAGE.DETAILS, //we go to the details page
             selectedItem: item
+        });
+    }
+
+    /**
+     * Callback passed to the RangeSlider, triggered when the user
+     * stops dragging the slider. Used to dinamically update results
+     * for a new slider value.
+     */
+    onDragStop = () => {
+        // This call is to update the displayed results for every change in radius
+        if (this.state.request) {
+            this.handleNewRequest(this.state.request);
+        }
+    }
+
+    /**
+     * Method to go back to the results page. Passed as a callback
+     * to the ItemDetails component.
+     */
+    backToResults = () => {
+        this.setState({
+            page: PAGE.RESULTS
+        });
+
+    }
+
+    /**
+     * Method that can be called to display an auto-hiding message.
+     */
+    displayMessage = (message) => {
+        this.setState({
+            message: message
+        });
+    }
+
+    /**
+     * Callback passed to the DisplayMessage component, triggered when
+     * the message hides.
+     * It goes back to the homepage if there is nothing to display
+     * (i.e., no results and no selected item)
+     */
+    onMessageClose = () => {
+        this.setState({
+            message: "",
+            page: (this.state.results.length === 0 &&
+                !this.state.selectedItem) ? PAGE.HOME : this.state.page
         });
     }
 
     render() {
         return (
-            <div style={{marginTop: this.props.marginTop}}>
-                <div style={styles.inputArea}>
-                    <SearchBar
-                        handleNewRequest={this.handleNewRequest}
-                        handleUpdateInput={this.handleUpdateInput}
-                        searchText={this.state.searchText}
-                        dataSource={this.state.autoCompleteSource} />
-                    <RangeSlider
-                        min={this.minRadius}
-                        max={this.maxRadius}
-                        step={this.radiusStep}
-                        defaultValue={this.defaultRadius}
-                        value={this.state.radius}
-                        onChange={this.handleRadiusChange}
-                        onDragStop={() => {
-                            // This call is to update the displayed results for every change in radius
-                            if (this.state.request) {
-                                this.handleNewRequest(this.state.request);
-                            }
-                        }} />
-                </div>
-                <div style={styles.contentContainer}>
-                    {this.state.page === STATE.RESULTS &&
-                        <DisplayResults request={this.state.request}
-                            radius={this.state.radius}
-                            results={this.state.results}
-                            onResultClick={this.showItemDetails} />}
-                    {this.state.page === STATE.DETAILS &&
-                        <ItemDetails item={this.state.selectedItem} 
-                        backToResults={() => {
-                            this.setState({
-                                page: STATE.RESULTS
-                            });
-                        }}/>}
-                    {this.state.page === STATE.HOME &&
-                        <HomePage />}
-                </div>
-                <Snackbar
-                    open={this.state.message.length > 0}
-                    message={this.state.message}
-                    autoHideDuration={2000}
-                    onRequestClose={() => {
-                        console.log(this.state.results);
-                        console.log(this.state.selectedItem);
-                        this.setState({
-                            message: "",
-                            page: (this.state.results.length === 0 &&
-                                !this.state.selectedItem) ? STATE.HOME : this.state.page
-                        });
-                    }}
+            <div style={{ marginTop: this.props.marginTop }}>
+                <InputArea
+                    handleNewRequest={this.handleNewRequest}
+                    handleUpdateInput={this.handleUpdateInput}
+                    searchText={this.state.searchText}
+                    hintText={STRINGS.HINT_TEXT}
+                    autoCompleteSource={this.state.autoCompleteSource}
+                    radius={this.state.radius}
+                    handleRadiusChange={this.handleRadiusChange}
+                    onDragStop={this.onDragStop}
+                    minRadius={RADIUS_PROPS.minRadius}
+                    maxRadius={RADIUS_PROPS.maxRadius}
+                    radiusStep={RADIUS_PROPS.radiusStep}
+                    defaultRadius={RADIUS_PROPS.defaultRadius}
                 />
-
+                <Page
+                    page={this.state.page}
+                    request={this.state.request}
+                    radius={this.state.radius}
+                    results={this.state.results}
+                    onResultClick={this.showItemDetails}
+                    item={this.state.selectedItem}
+                    backToResults={this.backToResults}
+                />
+                <DisplayMessage // This is not visible when message is empty
+                    message={this.state.message}
+                    autoHideDuration={MESSAGE_DURATION}
+                    onMessageClose={this.onMessageClose}
+                />
             </div>
         );
     }

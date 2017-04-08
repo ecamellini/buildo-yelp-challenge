@@ -8,6 +8,7 @@ import RestaurantIcon from 'material-ui/svg-icons/maps/restaurant';
 import Colors from './colors.js'
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
+import { STRINGS } from './constants.js'
 
 
 // Needed for onTouchTap (Material UI)
@@ -27,17 +28,16 @@ const styles = {
 }
 
 
+/**
+ * App main component with app bar, left drawer and content 
+ */
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false
+      open: false  // Drawer state
     };
   }
-
-  handleToggle = () => this.setState({ open: !this.state.open });
-
-  handleClose = () => this.setState({ open: false });
 
   render() {
     return (
@@ -45,21 +45,24 @@ class App extends React.Component {
         <div style={styles.app}>
           <AppBar
             iconElementLeft={<IconButton><RestaurantIcon /></IconButton>}
-            onLeftIconButtonTouchTap={this.handleToggle}
+            // Open the drawer when the button is touched
+            onLeftIconButtonTouchTap={() => this.setState({ open: true })}
             style={styles.appBar}
           />
           <Content marginTop={60} />
           <Drawer
             open={this.state.open}
+            // The following two properties are needed to make the drawer
+            // close while tapping somewhere else or pressing ESC
             docked={false}
-            onRequestChange={(open) => this.setState({ open })}
+            onRequestChange={(open) => this.setState({ open: open })}
           >
             <MenuItem onTouchTap={() => {
-              window.location = "https://ecamellini.github.io"
-            }}>Credits</MenuItem>
+              window.location = STRINGS.CREDITS_URL
+            }}>{STRINGS.CREDITS}</MenuItem>
             <MenuItem onTouchTap={() => {
-              window.location = "https://github.com/ecamellini/buildo-yelp-challenge"
-            }}>Source code</MenuItem>
+              window.location = STRINGS.SOURCE_URL
+            }}>{STRINGS.SOURCE}</MenuItem>
           </Drawer>
         </div>
       </MuiThemeProvider>
