@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@tonybadguy/call-me-maybe": "^2.0.1",
     "material-ui": "^0.17.1",
     "react": "^15.4.2",
     "react-back2top": "^0.1.5",
