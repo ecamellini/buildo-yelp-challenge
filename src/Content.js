@@ -5,6 +5,7 @@ import YELP_CONFIG from './yelp-api-config.js';
 import DisplayMessage from './DisplayMessage'
 import { PAGE, RADIUS_PROPS, YELP_API, STRINGS } from './constants.js'
 import { MESSAGE_DURATION } from './constants.js'
+import {paramsToString, makeRequest} from './request.js'
 
 
 /**
@@ -47,8 +48,8 @@ class Content extends React.Component {
                 client_secret: YELP_CONFIG.APP_SECRET,
                 grant_type: "client_credentials"
             }
-        }).then((datums) => {
-            this.apiToken = JSON.parse(datums);
+        }).then((response) => {
+            this.apiToken = JSON.parse(response);
         }).catch((err) => {
             console.error(err);
             this.displayMessage(STRINGS.API_REQUEST_ERROR);
@@ -66,24 +67,26 @@ class Content extends React.Component {
             lat = match[1];
             long = match[3];
         }
+        let params = paramsToString({
+            location: (!lat && !long) ? value : null,  // Location inserted
+            latitude: lat,
+            longitude: long,
+            radius: (this.state.radius * 1000), // Radius selected in the slider
+            categories: YELP_API.CATEGORIES, // Categories
+            limit: YELP_API.RESULTS_LIMIT, // Max number of items returened
+            offset: offset
+        });
         makeRequest({
             method: "GET",
-            url: YELP_CONFIG.CORS_PROXY_URL + "https://api.yelp.com/v3/businesses/search",
+            url: YELP_CONFIG.CORS_PROXY_URL + "https://api.yelp.com/v3/businesses/search"
+            + "?" + params,
             headers: {
                 'Authorization': this.apiToken.token_type + " " + this.apiToken.access_token
-            },
-            params: {
-                location: (!lat && !long) ? value : null,  // Location inserted
-                latitude: lat,
-                longitude: long,
-                radius: (this.state.radius * 1000), // Radius selected in the slider
-                categories: YELP_API.CATEGORIES, // Categories
-                limit: YELP_API.RESULTS_LIMIT, // Max number of items returened
-                offset: offset
             }
         }).then((response) => {
-            let results = response.jsonBody.businesses;
-            let total = response.jsonBody.total;
+            let respObj = JSON.parse(response);
+            let results = respObj.businesses;
+            let total = respObj.total;
             console.log("Total results: " + total)
             console.log("Offset: " + offset)
             //console.log(JSON.stringify(r[1], null, 4));
@@ -258,56 +261,5 @@ class Content extends React.Component {
         );
     }
 }
-
-
-function makeRequest(opts) {
-    return new Promise(function (resolve, reject) {
-        var xhr = new XMLHttpRequest();
-        xhr.open(opts.method, opts.url, true);
-        xhr.onload = function () {
-            if (this.status >= 200 && this.status < 300) {
-                resolve(xhr.response);
-            } else {
-                reject({
-                    status: this.status,
-                    statusText: xhr.statusText
-                });
-            }
-        };
-        xhr.onerror = function () {
-            reject({
-                status: this.status,
-                statusText: xhr.statusText
-            });
-        };
-        console.log(opts.headers);
-        if (opts.headers) {
-            Object.keys(opts.headers).forEach(function (key) {
-                xhr.setRequestHeader(key, opts.headers[key]);
-            });
-        }
-        var params = opts.params;
-        // We'll need to stringify if we've been given an object
-        // If we have a string, this is skipped.
-        if (params && typeof params === 'object') {
-            let strParams = "";
-            let key;
-            for (key of Object.keys(params)) {
-                let val = params[key];
-                if (val) {
-                    strParams +=  encodeURIComponent(key) + '=' + encodeURIComponent(params[key]) + "&";
-                    //strParams +=  key + '=' + params[key];
-                }
-            }
-
-            if(strParams.slice(-1) === '&')
-                params = strParams.slice(0, -1);
-            else
-                params = strParams;
-        }
-        xhr.send(params);
-    });
-}
-
 
 export default Content;
