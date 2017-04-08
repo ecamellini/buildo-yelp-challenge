@@ -5,7 +5,7 @@ import { STRINGS } from './constants'
 
 const styles = {
     homeCard: {
-        maxWidth: 500,
+        maxWidth: 600,
         margin: '0 auto',
         marginTop: 50
     }

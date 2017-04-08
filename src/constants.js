@@ -29,7 +29,9 @@ const STRINGS = {
     SOURCE_URL: "https://github.com/ecamellini/buildo-yelp-challenge",
     HOME_TITLE: "Welcome to " + document.title,
     HOME_TEXT: "Enter a location in the search bar, select the radius and press enter. " +
-    "Displayed results are updated dynamically according to range variations.",
+    "Displayed results are updated dynamically according to range variations." +
+    "The location can be also inserted in the format of latitude and longitude," +
+    "separated by a comma.",
     HINT_TEXT: "Insert a location and press enter",
     BACK_TO_RESULTS: "Back to results list",
     YELP_LOGO: "Yelp logo tm",
