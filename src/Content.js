@@ -9,11 +9,6 @@ import { MESSAGE_DURATION } from './constants.js'
 
 
 // TODO: cache token
-// TODO: show more button
-// TODO: handle lat long
-
-
-
 /**
  * Content component: it contains the top input area and the page.
  * The state attribute page controls what page should be rendered.
@@ -61,8 +56,18 @@ class Content extends React.Component {
          * offset is the position in the list of results.
          */
     yelpSearch = (value, offset) => {
+        let lat, long;
+        let match = /^(-?\d+(.\d+)?),\s*(-?\d+(.\d+)?)\s*$/.exec(value);
+        if (match) {
+            lat = match[1];
+            long = match[3];
+            console.log(lat)
+            console.log(long)
+        }
         this.yelpClient.search({
-            location: value,  // Location inserted by the user
+            location: (!lat && !long) ? value : null,  // Location inserted
+            latitude: lat,
+            longitude: long,
             radius: (this.state.radius * 1000), // Radius selected in the slider
             categories: YELP_API.CATEGORIES, // Categories
             limit: YELP_API.RESULTS_LIMIT, // Max number of items returened
