@@ -89,7 +89,13 @@ class Content extends React.Component {
                     offset: offset
                 });
             } else {
-                this.displayMessage(STRINGS.NO_RESULTS)
+                // Here we display a message but also store the request:
+                // this didn't lead to any results but the user can still
+                // try to change the radius
+                this.setState({
+                    request: value,
+                    message: STRINGS.NO_RESULTS
+                });
             }
         }).catch(e => {
             console.log(e);
